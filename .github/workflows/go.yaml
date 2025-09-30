@@ -1,0 +1,59 @@
+name: SLSA container image provenance
+
+permissions: {}
+
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      CGO_ENABLED: 0
+    steps:
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: stable
+      id: go
+
+    - name: go mod download
+      run: |
+        go mod download
+
+    - name: Test
+      run: |
+        go test ./...
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: stable
+      id: go
+
+    - name: go mod download
+      run: |
+        go mod download
+
+    - name: Lint
+      uses: golangci/golangci-lint-action@v8
+      with:
+        version: latest
